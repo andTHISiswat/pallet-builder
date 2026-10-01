@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pallet Builder – Free Pallet Building Program &amp; Pallet Calculator</title>
+<meta name="description" content="Pallet Builder is a free pallet building program. Enter a pick sheet or PO and it shows how many pallets you need and how to stack each one layer by layer. Works offline, installs on Windows without admin rights.">
+<meta name="keywords" content="pallet builder, pallet building program, pallet calculator, pallet stacking, pallet planner, pallet build sheet, pick sheet, warehouse, shipping, palletizing, mixed pallet">
+<link rel="canonical" href="https://andthisiswat.github.io/pallet-builder/">
+<link rel="icon" href="images/icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pallet Builder – Free Pallet Building Program">
+<meta property="og:description" content="Turn a pick sheet or PO into a layer-by-layer pallet build plan. Free, offline, no admin rights needed.">
+<meta property="og:url" content="https://andthisiswat.github.io/pallet-builder/">
+<meta property="og:image" content="https://andthisiswat.github.io/pallet-builder/images/build-screen.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Pallet Builder",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Windows",
+  "description": "Free pallet building program: plan pallets from pick sheets and POs, how many pallets and how to stack each one layer by layer.",
+  "author": {"@type": "Person", "name": "Tyler Wilson"},
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "downloadUrl": "https://github.com/andTHISiswat/pallet-builder/raw/main/Pallet-Builder-Clean-Installer.zip",
+  "screenshot": "https://andthisiswat.github.io/pallet-builder/images/build-screen.png"
+}
+</script>
+<style>
+:root{--bg:#15191d;--surface:#1d2328;--ink:#e7ebee;--muted:#9aa6b0;--line:#343d45;--accent:#f5c02a;--accent-ink:#15191d;--deck:#9fb6c9;--box:#c9965a}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:14px;padding-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.04em;text-decoration:none;color:var(--ink)}
+.brand img{width:36px;height:36px;border-radius:8px}
+.nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-size:15px}
+.nav a:hover{color:var(--ink)}
+.hero{padding:64px 0 40px;text-align:center}
+.word{display:flex;justify-content:center;align-items:flex-end;gap:14px;flex-wrap:wrap;margin:0 0 6px}
+.word .plain{font-size:clamp(34px,7vw,64px);font-weight:800;letter-spacing:.03em}
+.crates{display:inline-flex;flex-direction:column;align-items:stretch}
+.crates span.row{display:flex;gap:3px}
+.crates b{display:grid;place-items:center;width:clamp(30px,5.4vw,50px);height:clamp(36px,6.4vw,60px);background:var(--box);color:#2a1a0a;font-size:clamp(20px,4vw,38px);border:2px solid #7a5426;border-radius:3px;box-shadow:inset 0 0 0 3px #b07e45}
+.crates i{display:block;height:8px;margin-top:3px;background:var(--deck);border-radius:2px}
+.by{color:var(--muted);font-weight:600;margin:4px 0 26px;font-size:15px}
+h1{font-size:clamp(22px,3.4vw,32px);line-height:1.3;margin:0 auto 14px;max-width:760px}
+.lede{color:var(--muted);max-width:680px;margin:0 auto 30px}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-block;padding:14px 22px;border-radius:10px;font-weight:700;text-decoration:none;border:2px solid var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{color:var(--accent)}
+.note{color:var(--muted);font-size:14px;margin-top:12px}
+.shot{margin:44px auto 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.shot img{display:block;width:100%;height:auto}
+section{padding:56px 0;border-top:1px solid var(--line)}
+h2{font-size:26px;margin:0 0 22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.card h3{margin:0 0 6px;font-size:18px}
+.card p{margin:0;color:var(--muted);font-size:15.5px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center}
+.split img{width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}
+.split p{color:var(--muted)}
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:14px}
+ol.steps li{counter-increment:s;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px 16px 64px;position:relative}
+ol.steps li::before{content:counter(s);position:absolute;left:18px;top:14px;width:32px;height:32px;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink);font-weight:800;border-radius:6px}
+footer{border-top:1px solid var(--line);padding:28px 0 40px;color:var(--muted);font-size:14px}
+@media (max-width:760px){.split{grid-template-columns:1fr}.nav a{margin-left:12px}.hero{padding-top:44px}}
+@media (max-width:420px){.nav a:not(.dl){display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="./"><img src="images/icon.png" alt="" width="36" height="36">PALLET BUILDER</a>
+    <nav class="nav"><a href="#features">Features</a><a href="#install">Install</a><a class="dl" href="https://github.com/andTHISiswat/pallet-builder">GitHub</a></nav>
+  </div>
+</header>
+
+<main>
+<div class="hero">
+  <div class="wrap">
+    <div class="word" aria-label="Pallet Builder">
+      <span class="plain">PALLET</span>
+      <span class="crates" aria-hidden="true"><span class="row"><b>B</b><b>U</b><b>I</b><b>L</b><b>D</b><b>E</b><b>R</b></span><i></i></span>
+    </div>
+    <p class="by">Built by: Tyler Wilson</p>
+    <h1>The free pallet building program: from pick sheet to pallet build sheet</h1>
+    <p class="lede">Enter a pick sheet, pick list or PO. Pallet Builder tells you how many pallets you need and how to stack each one, layer by layer: which boxes, which way they face, and where the plywood goes.</p>
+    <div class="btns">
+      <a class="btn primary" href="https://github.com/andTHISiswat/pallet-builder/raw/main/Pallet-Builder-Clean-Installer.zip">Download for Windows</a>
+      <a class="btn ghost" href="Pallet-Builder.html">Try it in your browser</a>
+    </div>
+    <p class="note">Free · Works offline · No admin rights needed · Updates itself</p>
+    <div class="shot"><img src="images/build-screen.png" width="1366" height="860" alt="Pallet Builder showing 9 pallets needed, 52 layers, 187 cases and 4,549 lb for a 45-PO order"></div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <h2>What it does</h2>
+    <div class="grid">
+      <div class="card"><h3>Pallets needed</h3><p>Counts how many pallets an order takes, keeping each under your max height and max weight.</p></div>
+      <div class="card"><h3>Layer-by-layer plan</h3><p>Every layer shows the part #, case count and which way each box faces, with a top-down drawing.</p></div>
+      <div class="card"><h3>Keep POs together</h3><p>Builds each PO in its own section, with an optional plywood split between POs.</p></div>
+      <div class="card"><h3>3D view</h3><p>Spin, zoom and watch the pallet build itself one layer at a time.</p></div>
+      <div class="card"><h3>Upload a PO or pick list</h3><p>Excel or CSV with PO #, part # and qty. Match columns reads files from other systems.</p></div>
+      <div class="card"><h3>Read a picture</h3><p>Snap a photo of a pick sheet or box label and it reads the part numbers and quantities.</p></div>
+      <div class="card"><h3>Box catalog</h3><p>Save case sizes, weight per case and units per case. Upload from Excel or add one at a time, in tabs.</p></div>
+      <div class="card"><h3>Print and export</h3><p>Print build sheets for the floor, or export a pallet manifest and summary to CSV or Excel with pallet IDs.</p></div>
+      <div class="card"><h3>Save, open, back up</h3><p>Save builds in folders by PO or order #, and back everything up to one file.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap split">
+    <img src="images/3d-view.png" width="979" height="725" alt="3D view of a mixed pallet with plywood between POs" loading="lazy">
+    <div>
+      <h2>See the pallet before you build it</h2>
+      <p>The 3D view stacks the pallet one layer at a time, so you can check the build before you pull a single case. Turn it 90°, look top down, or press Build it to watch it go together.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap split">
+    <div>
+      <h2>A build sheet anyone can follow</h2>
+      <p>Each pallet lists what to pull for every PO, then walks through each layer: how many cases, which side faces which way on a 40×48 (or any size) pallet, and when to lay a sheet of plywood. Set your own pallet size, max height, deck height, max weight and overhang.</p>
+    </div>
+    <img src="images/layer-plan.png" width="756" height="810" alt="Layer 1 plan showing case orientation along the 40 and 48 inch sides" loading="lazy">
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Install on Windows</h2>
+    <ol class="steps">
+      <li>Download <a href="https://github.com/andTHISiswat/pallet-builder/raw/main/Pallet-Builder-Clean-Installer.zip">Pallet-Builder-Clean-Installer.zip</a>.</li>
+      <li>Unzip it and run the installer. No admin rights needed.</li>
+      <li>Open Pallet Builder from the shortcut. Press <b>How to use</b> for a 4-minute demo video, or <b>Try the 45-PO test</b> to see an example order.</li>
+    </ol>
+    <p class="note" style="margin-top:18px">Installed copies update themselves and keep your saved builds, parts, PO #s, folders and tabs.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">Pallet Builder · free pallet building program for warehouses, shipping and receiving · built by Tyler Wilson · <a href="https://github.com/andTHISiswat/pallet-builder">View on GitHub</a></div>
+</footer>
+</body>
+</html>
