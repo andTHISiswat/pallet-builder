@@ -3210,14 +3210,14 @@ self.onmessage = async e => { const m = e.data;
 })();
 </script>
 
-<div id="appVersion" class="appver" aria-label="Program version">v1.1.0</div>
+<div id="appVersion" class="appver" aria-label="Program version">v1.1.1</div>
 <div id="updBar" class="updbar" hidden></div>
 <div id="updState" class="appver updstate" role="status" hidden></div>
 
 <script>
 // Updates: the installed program checks the shared copy online. The launcher swaps in a newer copy each time Pallet Builder opens;
 // if one comes out while the program is open, this says to close and reopen it.
-window.PB_BUILD = 2026100107; window.PB_VERSION = '1.1.0';
+window.PB_BUILD = 2026100108; window.PB_VERSION = '1.1.1';
 (function(){
   var P = window.PB_PROFILE || {}, url = P.updateUrl; if (!url || location.protocol !== 'file:') return;
   var st = document.getElementById('updState');
@@ -3231,7 +3231,10 @@ window.PB_BUILD = 2026100107; window.PB_VERSION = '1.1.0';
       var b = document.getElementById('updBar'); b.textContent = 'An update is ready' + (v.version ? ' (v' + v.version + ')' : '') + '. Close Pallet Builder and open it again to get it.'; b.hidden = false;
     }).catch(function(){});   // can't reach the internet: say nothing
   }
-  setTimeout(check, 1500); setInterval(check, 30 * 60 * 1000);
+  // check soon after opening, every 2 minutes while open, and whenever the window is clicked back into (at most every 30 s)
+  var last = 0; function maybe(){ if (Date.now() - last > 30000){ last = Date.now(); check(); } }
+  setTimeout(function(){ last = Date.now(); check(); }, 1500); setInterval(function(){ last = Date.now(); check(); }, 2 * 60 * 1000);
+  window.addEventListener('focus', maybe); document.addEventListener('visibilitychange', function(){ if (!document.hidden) maybe(); });
 })();
 </script>
 </body></html>
