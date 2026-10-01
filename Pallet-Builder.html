@@ -205,6 +205,12 @@ td.code{font-family:var(--mono);font-weight:600}
 .v3dlegend span{display:inline-flex;align-items:center;gap:5px}
 .v3dlegend i{width:12px;height:12px;border-radius:2px;display:inline-block}
 .pal-3d{margin-left:8px}
+.askdlg{width:min(420px,calc(100vw - 32px))}
+.askdlg h2{color:var(--bad);font-size:18px;margin:0;overflow-wrap:anywhere}
+.askdlg p{margin:0}
+.askbtns{justify-content:flex-end}
+.askbtns button{min-width:84px}
+@media print{#askDlg{display:none!important}}
 .picdlg{width:min(1100px,calc(100vw - 24px));max-height:calc(100vh - 24px)}
 .opendlg[open]>.picgrid{flex:1 1 auto;min-height:0}
 .picgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:14px;overflow:auto}
@@ -347,7 +353,7 @@ td.code{font-family:var(--mono);font-weight:600}
       <li>Boxes stay upright. For parts marked <i>On side OK</i> it tries all 3 ways the box can sit (upright, on its side, on its end), for full pallets and mixed ones, and only lays boxes down when that means fewer pallets. It uses as few laid-down boxes as it can. A box too big to stand upright goes on its side either way.</li>
       <li>Limits: 48″ × 40″ pallet, 96″ tall counting the 5.5″ deck, 4,000 lb. Change any of them under <i>Pallet &amp; rules</i>.</li>
       <li>Overhang is <b>0″</b> by default, so nothing hangs past the pallet edge. If your builds allow it, set <i>Overhang (in per side)</i> under <i>Pallet &amp; rules</i>, for example 1″. That can save a pallet.</li>
-      <li>A part # that isn’t in the Box catalog can’t be added to an order. You’ll see <b>Error Part # &lt;part #&gt; Not Listed!</b> Add the part on the Box catalog tab first.</li>
+      <li>A part # that isn’t in the Box catalog can’t be added to an order. You’ll see <b>Error Part # &lt;part #&gt; Not Listed!</b> It then asks if you want to add it to the Box Catalog: <i>Yes</i> takes you to <i>Add one box</i> with the Part # filled in, so you only enter the rest. <i>No</i> closes it and nothing is added to the order.</li>
       <li>The order starts blank every time the program opens. Save anything you want to keep.</li>
       <li>The program opens in dark mode. Use the <i>Light mode</i> / <i>Dark mode</i> button at the top to switch. It remembers your choice.</li>
       <li>The printed build sheet has a <b>☐ BUILT</b> box on every layer to check off by hand as each layer is built.</li>
@@ -500,6 +506,12 @@ td.code{font-family:var(--mono);font-weight:600}
     </div>
   </section>
 </div>
+
+<dialog id="askDlg" class="opendlg askdlg" aria-labelledby="askTitle">
+  <h2 id="askTitle" class="notlisted-t"></h2>
+  <p>Do you want to add it to the Box Catalog?</p>
+  <div class="btns askbtns"><button class="primary" type="button" id="askYes">Yes</button><button type="button" id="askNo">No</button></div>
+</dialog>
 
 <dialog id="picDlg" class="opendlg picdlg" aria-labelledby="picTitle">
   <div class="panel-head"><h2 id="picTitle">Read a picture</h2><button class="small" type="button" id="picCancel">Cancel</button></div>
@@ -1701,7 +1713,7 @@ td.code{font-family:var(--mono);font-weight:600}
     const msg = $('#pickMsg');
     if (!code || !(qty > 0)){ msg.className = 'msg err'; msg.textContent = 'Enter a part number and how many.'; return; }
     const p = activeLookup().get(code);
-    if (!p){ msg.className = 'msg err notlisted'; msg.textContent = `Error Part # <${code}> Not Listed!`; $('#pCode').focus(); $('#pCode').select(); return; }
+    if (!p){ msg.className = 'msg err notlisted'; msg.textContent = `Error Part # <${code}> Not Listed!`; askAddPart(code); return; }
     addToOrder([{ code, qty, by, side }]);
     const conv = p && by === 'ea' ? (p.cq > 0 ? ` That’s ${fmt(Math.ceil(qty / p.cq))} cs at ${fmt(p.cq)} per case.` : ' No case qty on file, so it can’t be turned into cases yet.') : '';
     msg.className = 'msg' + (by !== 'ea' || p.cq > 0 ? ' ok' : ' err');
@@ -2428,6 +2440,22 @@ td.code{font-family:var(--mono);font-weight:600}
     }
   });
 
+  // ---------- part # not in the Box catalog: offer to add it ----------
+  let askCode = '';
+  function askAddPart(code){
+    askCode = code; $('#askTitle').textContent = `Error Part # <${code}> Not Listed!`;
+    const d = $('#askDlg'); if (!d.open) d.showModal(); $('#askYes').focus();
+  }
+  $('#askNo').addEventListener('click', () => { $('#askDlg').close(); $('#pCode').focus(); $('#pCode').select(); });   // not added to the order
+  $('#askYes').addEventListener('click', () => {
+    $('#askDlg').close();
+    showTab('catalog'); $('#addForm').reset(); $('#fCode').value = askCode;   // just the Part #; fill in the rest
+    if ($('#fGrp') && $('#upGrp')) $('#fGrp').value = catGrp;
+    $('#formTitle').textContent = 'Add one box';
+    $('#addForm').scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => $('#fDesc').focus(), 300);
+  });
+  $('#askDlg').addEventListener('cancel', () => { $('#pCode').focus(); });
+
   // ---------- read a picture (OCR, built in, works offline) ----------
   // A photo or screenshot of a PO / pick sheet (Build pallet) or of box labels / a box-size sheet (Box catalog)
   // is read on this PC, turned into rows, and shown for checking before anything is added.
@@ -2982,7 +3010,7 @@ self.onmessage = async e => { const m = e.data;
 <script>
 // Updates: the installed program checks the shared copy online. The launcher swaps in a newer copy each time Pallet Builder opens;
 // if one comes out while the program is open, this says to close and reopen it.
-window.PB_BUILD = 2026100101;
+window.PB_BUILD = 2026100102;
 (function(){
   var P = window.PB_PROFILE || {}, url = P.updateUrl; if (!url || location.protocol !== 'file:') return;
   function check(){
