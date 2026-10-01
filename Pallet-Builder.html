@@ -3021,14 +3021,14 @@ self.onmessage = async e => { const m = e.data;
 })();
 </script>
 
-<div id="appVersion" class="appver" aria-label="Program version">Version 1.0.0</div>
+<div id="appVersion" class="appver" aria-label="Program version">v1.0.0</div>
 <div id="updBar" class="updbar" hidden></div>
 <div id="updState" class="appver updstate" role="status" hidden></div>
 
 <script>
 // Updates: the installed program checks the shared copy online. The launcher swaps in a newer copy each time Pallet Builder opens;
 // if one comes out while the program is open, this says to close and reopen it.
-window.PB_BUILD = 2026100105;
+window.PB_BUILD = 2026100106; window.PB_VERSION = '1.0.0';
 (function(){
   var P = window.PB_PROFILE || {}, url = P.updateUrl; if (!url || location.protocol !== 'file:') return;
   var st = document.getElementById('updState');
@@ -3039,7 +3039,7 @@ window.PB_BUILD = 2026100105;
       if (!v || !v.build) return;
       if (!(v.build > window.PB_BUILD)){ show('Up to date', false); return; }
       show('Update available', true);
-      var b = document.getElementById('updBar'); b.textContent = 'An update is ready (Version ' + (v.version || '') + '). Close Pallet Builder and open it again to get it.'; b.hidden = false;
+      var b = document.getElementById('updBar'); b.textContent = 'An update is ready' + (v.version ? ' (v' + v.version + ')' : '') + '. Close Pallet Builder and open it again to get it.'; b.hidden = false;
     }).catch(function(){});   // can't reach the internet: say nothing
   }
   setTimeout(check, 1500); setInterval(check, 30 * 60 * 1000);
