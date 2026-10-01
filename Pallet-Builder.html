@@ -208,6 +208,21 @@ td.code{font-family:var(--mono);font-weight:600}
 .v3dlegend i{width:12px;height:12px;border-radius:2px;display:inline-block}
 .pal-3d{margin-left:8px}
 .askdlg{width:min(420px,calc(100vw - 32px))}
+.expdlg{width:min(560px,calc(100vw - 32px))}
+.expids{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.expids .field{display:grid;gap:4px}.expids input{width:150px}
+.expauto{display:flex!important;align-items:center;gap:8px;padding-bottom:10px;grid-template-columns:none}
+.expauto input{width:17px;height:17px;margin:0}
+.expbtns{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 12px;align-items:center}
+.expbtns button{white-space:nowrap}
+.mapdlg{width:min(720px,calc(100vw - 32px))}
+.mapfields{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.mapfields .field{display:grid;gap:4px}.mapfields small{color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0}
+.maptable{width:100%;border-collapse:collapse;font-size:13px}.maptable th,.maptable td{padding:4px 6px;white-space:nowrap}
+.mapfoot{justify-content:space-between}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;font-size:12.5px;padding:4px 6px;cursor:pointer}
+.linkbtn:hover{color:var(--ink)}
+@media print{#expDlg,#mapDlg{display:none!important}}
 .askdlg h2{color:var(--bad);font-size:18px;margin:0;overflow-wrap:anywhere}
 .askdlg p{margin:0}
 .askbtns{justify-content:flex-end}
@@ -349,6 +364,7 @@ td.code{font-family:var(--mono);font-weight:600}
       <li><b>Read the build</b><span>It shows how many pallets you need, what to pull for each one, and every layer from the bottom up. Each part in a layer gets a letter (A, B, C…) that matches its spots on the drawing. <i>×2</i> or <i>×3</i> on the drawing means stack that many high.</span></li>
       <li><b>Save or open</b><span id="helpSave">Press <i>Save</i> and give the build a name, like the PO or order #. Press <i>Open</i> to see your folders. There are no folders or saved builds to start with. Make a folder for each of your locations or customers. Any folder with no folders inside it gets a built-in <i>all parts</i> build with every part # in your Box catalog at 0 qty, so you only type the quantities. Press <i>＋ New folder</i> (or pick <i>＋ New folder…</i> when saving) to add your own folders, at the top or inside another folder. Every save and every folder has a <i>Delete</i> button; tap it twice to delete. Deleting a folder also deletes everything in it. If you delete a built-in save or folder, <i>↺ Bring back deleted built-in saves &amp; folders</i> at the bottom of the Open window puts them back.</span></li>
       <li><b>Print it</b><span>Press <i>View print sheet</i> any time to see exactly how it will print. Choose <i>All pallets</i> or one pallet next to <i>Print build sheet</i> (or press <i>Print this pallet</i> on a pallet), then hand it to whoever is building. Each layer shows a drawing with the same letters, how to turn the boxes, and the height at the top of the layer.</span></li>
+      <li><b>Export</b><span>Press <i>Export</i> (under <i>Copy as text</i>) to save the pallets for your WMS, ERP, shipping or the office: a <i>pallet manifest</i> (one row per pallet, PO and part), a <i>pallet summary</i> (one row per pallet), or one Excel file with both. Each pallet gets an ID like <i>PLT-1001</i>; set how it starts, and it counts up after each export so IDs don't repeat. Files from another system: if <i>Upload PO</i> or <i>Choose file</i> can't tell which column is which, it asks you once (or press <i>Match columns</i>), and remembers that layout for the next file with the same columns.</span></li>
       <li><b>See it in 3D</b><span>Press <i>3D view</i> under <i>Copy as text</i>, or <i>3D view</i> on any pallet. Drag to spin the pallet around, scroll (or pinch) to zoom. <i>Build it</i> stacks it one layer at a time, and the slider shows the pallet up to any layer. The 3D view is for the screen only; it isn’t printed.</span></li>
     </ol>
     <ul class="tips">
@@ -396,7 +412,7 @@ td.code{font-family:var(--mono);font-weight:600}
           <button class="primary" type="submit">Add</button>
         </form>
         <datalist id="codeList"></datalist>
-        <div class="porow"><label class="filebtn" title="Upload a PO file (Excel or CSV) with PO #, part # and qty">Upload PO<input type="file" id="poFile" accept=".xlsx,.xls,.csv,.txt" multiple></label><label class="filebtn" title="Read a photo or screenshot of a PO or pick sheet">📷 Read picture<input type="file" id="picOrderFile" accept="image/*"></label><span class="hint">Excel or CSV with PO #, part # and qty. Or read a picture of a PO or pick sheet: press <i>Read picture</i>, or copy the picture and press Ctrl+V.</span></div>
+        <div class="porow"><label class="filebtn" title="Upload a PO file (Excel or CSV) with PO #, part # and qty">Upload PO<input type="file" id="poFile" accept=".xlsx,.xls,.csv,.txt" multiple></label><label class="filebtn" title="Read a photo or screenshot of a PO or pick sheet">📷 Read picture<input type="file" id="picOrderFile" accept="image/*"></label><button class="linkbtn" type="button" id="poMapBtn" title="Pick which column is which in an order file from another system">Match columns</button><span class="hint">Excel or CSV with PO #, part # and qty. Or read a picture of a PO or pick sheet: press <i>Read picture</i>, or copy the picture and press Ctrl+V.</span></div>
         <div class="poopts" id="keepPORow">
           <label class="keeppo"><input type="checkbox" id="keepPOChk" checked><span><b>Keep POs together</b></span></label>
           <div class="keeppo plyrow" id="plyRow"><label><input type="checkbox" id="plyChk" checked><b>Plywood split</b></label><select id="plyIn" aria-label="Plywood thickness" title="Plywood thickness (counted in the pallet height)"><option value="0.125">1/8″</option><option value="0.25">1/4″</option><option value="0.375">3/8″</option><option value="0.5">1/2″</option><option value="0.625">5/8″</option><option value="0.75">3/4″</option><option value="1">1″</option></select></div>
@@ -443,7 +459,7 @@ td.code{font-family:var(--mono);font-weight:600}
 
       <div class="panel">
         <div class="rulesline" id="rulesLine" aria-label="Pallet and rules in use"></div>
-        <div class="panel-head"><h2>Build</h2><div class="bhead-r"><div class="btns"><select id="printWhich" aria-label="Which pallets to print"><option value="all">All pallets</option></select><button id="viewPrintBtn" type="button">View print sheet</button><button id="printBtn" class="primary" type="button">Print build sheet</button><button id="copyBtn" type="button">Copy as text</button></div><div class="btns v3row"><button id="v3dBtn" type="button">3D view</button></div></div></div>
+        <div class="panel-head"><h2>Build</h2><div class="bhead-r"><div class="btns"><select id="printWhich" aria-label="Which pallets to print"><option value="all">All pallets</option></select><button id="viewPrintBtn" type="button">View print sheet</button><button id="printBtn" class="primary" type="button">Print build sheet</button><button id="copyBtn" type="button">Copy as text</button></div><div class="btns v3row"><button id="exportBtn" type="button" title="Save the pallets as a CSV or Excel file for your WMS, shipping or the office">Export</button><button id="v3dBtn" type="button">3D view</button></div></div></div>
         <p id="printMsg" class="msg" role="status"></p>
         <div class="stats" id="stats"></div>
         <div id="unknownWrap"></div>
@@ -464,6 +480,7 @@ td.code{font-family:var(--mono);font-weight:600}
         <div class="field grpfield"><label for="upGrp">Tab</label><select id="upGrp" class="grpsel"></select></div>
         <label class="filebtn primary">Choose file<input type="file" id="catFile" accept=".csv,.txt,.xlsx,.xls"></label>
         <label class="filebtn" title="Read a photo of a box label or a screenshot of a box-size sheet">📷 Read picture<input type="file" id="picCatFile" accept="image/*"></label>
+        <button class="linkbtn" type="button" id="catMapBtn" title="Pick which column is which in a box-size file from another system">Match columns</button>
         <span class="hint">or paste rows below, or paste a picture (Ctrl+V)</span>
       </div>
       <textarea id="catPaste" rows="4" aria-label="Paste box sizes" spellcheck="false" placeholder="Part #	Description	H	W	L	Weight	Case Qty"></textarea>
@@ -513,6 +530,29 @@ td.code{font-family:var(--mono);font-weight:600}
     </div>
   </section>
 </div>
+
+<dialog id="expDlg" class="opendlg expdlg" aria-labelledby="expTitle">
+  <div class="panel-head"><h2 id="expTitle">Export pallets</h2><button class="small" type="button" id="expClose">Close</button></div>
+  <p class="hint">Files your WMS, ERP, shipping or the office can open or import. CSV opens in Excel too.</p>
+  <div class="expids"><div class="field"><label for="expPrefix">Pallet ID starts with</label><input id="expPrefix" spellcheck="false"></div><div class="field"><label for="expStart">First number</label><input id="expStart" type="number" min="0" step="1"></div>
+    <label class="chk expauto"><input type="checkbox" id="expAuto">Count up after each export</label></div>
+  <div class="expbtns">
+    <button class="primary" type="button" id="expManifest">Pallet manifest (CSV)</button><span class="hint">One row per pallet, PO and part: Pallet ID, PO #, Part #, cases, units, weight, layers.</span>
+    <button type="button" id="expSummary">Pallet summary (CSV)</button><span class="hint">One row per pallet: Pallet ID, PO #s, cases, units, weight, height, size.</span>
+    <button type="button" id="expExcel">Excel file (both)</button><span class="hint">One .xlsx with a Manifest sheet and a Summary sheet.</span>
+  </div>
+  <p id="expMsg" class="msg" role="status"></p>
+</dialog>
+
+<dialog id="mapDlg" class="opendlg mapdlg" aria-labelledby="mapTitle">
+  <div class="panel-head"><h2 id="mapTitle">Match the columns</h2><button class="small" type="button" id="mapCancel">Cancel</button></div>
+  <p class="hint">Pick which column in your file holds each item. Other columns are skipped.</p>
+  <div class="mapfields" id="mapFields"></div>
+  <div class="tablewrap"><table class="maptable" id="mapPreview"></table></div>
+  <label class="chk"><input type="checkbox" id="mapSave" checked>Remember this layout for files with these same columns</label>
+  <p id="mapMsg" class="msg" role="status"></p>
+  <div class="btns mapfoot"><button class="small linkbtn" type="button" id="mapForget">Forget saved layouts</button><button class="primary" type="button" id="mapOk">Use these columns</button></div>
+</dialog>
 
 <dialog id="askDlg" class="opendlg askdlg" aria-labelledby="askTitle">
   <h2 id="askTitle" class="notlisted-t"></h2>
@@ -1860,10 +1900,15 @@ td.code{font-family:var(--mono);font-weight:600}
     $('#view-build').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   $('#poFile').addEventListener('change', async e => {
-    const fl = [...e.target.files]; if (!fl.length) return; const msg = $('#pickMsg'); const f = fl.length === 1 ? fl[0] : { name: fl.length + ' files' };
+    const fl = [...e.target.files]; e.target.value = ''; if (!fl.length){ forceMap.po = false; return; } const msg = $('#pickMsg'); const f = fl.length === 1 ? fl[0] : { name: fl.length + ' files' };
     try {
       poLines = [];
-      for (const one of fl) poLines.push(...readPOs(await readSheets(one), one.name));
+      for (const one of fl){
+        const sheets = await readSheets(one); let got = forceMap.po ? [] : readPOs(applySaved('po', sheets), one.name);
+        if (!got.length){ const m = await askColumns('po', sheets); if (m) got = readPOs(m, one.name); }
+        poLines.push(...got);
+      }
+      forceMap.po = false;
       if (!poLines.length){ msg.className = 'msg err'; msg.textContent = 'No PO lines found. The file needs a part # column and a qty column (and a PO # column for more than one PO).'; }
       else {
         const pos = [...new Set(poLines.map(l => l.po))];
@@ -2019,12 +2064,15 @@ td.code{font-family:var(--mono);font-weight:600}
     catch(err){ msg.className='msg err'; msg.textContent = errText(err); }
   }
   $('#catFile').addEventListener('change', async e => {
-    const f = e.target.files[0]; if (!f) return;
+    const f = e.target.files[0]; e.target.value = ''; if (!f) return;
     try {
       // look through every sheet and use the ones that have part #s with box sizes; other sheets and columns are ignored
-      const sheets = await readSheets(f), used = [], items = []; let skipped = 0;
+      const sheets0 = await readSheets(f), used = [], items = []; let skipped = 0;
+      let sheets = applySaved('cat', sheets0);
+      if (forceMap.cat){ forceMap.cat = false; const m = await askColumns('cat', sheets0); if (!m) return; sheets = m; }
       sheets.forEach(sh => { const r = parseCatalog(sh.rows); if (r.header && r.items.length){ used.push(sh.name); items.push(...r.items); skipped += r.skipped; } });
       if (!items.length){ const r = parseCatalog((sheets[0] || { rows: [] }).rows); items.push(...r.items); skipped += r.skipped; if (r.items.length) used.push(sheets[0].name); }
+      if (!items.length){ const m = await askColumns('cat', sheets0); if (m){ const r = parseCatalog(m[0].rows); items.push(...r.items); skipped += r.skipped; if (r.items.length) used.push(m[0].name); } }
       const seen = new Map(); items.forEach(p => seen.set(p.code, p));
       const ignored = sheets.length - used.length;
       await importRows({ items: [...seen.values()], skipped }, sheets.length > 1 ? `Read ${used.length > 1 ? 'sheets' : 'sheet'} “${used.join('”, “')}”${ignored ? ` and skipped ${ignored} other sheet${ignored > 1 ? 's' : ''} without box sizes` : ''}.` : '');
@@ -2446,6 +2494,147 @@ td.code{font-family:var(--mono);font-weight:600}
       const bb = findBuild(did); try { await removeBuild(did); $('#folderMsg').className = 'msg ok'; $('#folderMsg').textContent = `Deleted “${bb ? bb.name : 'build'}”.`; } catch(err){ msg.className = 'msg err'; msg.textContent = errText(err); }
     }
   });
+
+  // ---------- WMS / ERP files: export pallets, and match the columns of any order or box-size file ----------
+  // Pallet IDs (e.g. PLT-1001) so each pallet in the export matches the printed sheet
+  const palIds = Object.assign({ prefix: 'PLT-', next: 1001, auto: true }, lsGet((PB_PFX+'palids')) || {});
+  const savePalIds = () => lsSet((PB_PFX+'palids'), palIds);
+  let expPlan = null, expStart = null;   // the build last exported and the first number it got
+  const curStart = () => (expPlan === lastPlan && expStart != null) ? expStart : palIds.next;
+  const palId = i => palIds.prefix + (curStart() + i);
+  const csvQ = v => { const t = v == null ? '' : String(v); return /[",\r\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+  const toCsv = rows => rows.map(r => r.map(csvQ).join(',')).join('\r\n') + '\r\n';
+  const r1 = v => Math.round(v * 10) / 10;
+  function exportRows(){
+    const P = lastPlan, s = settings(); if (!P || !P.pallets.length) return null;
+    const date = today();
+    const manifest = [['Pallet ID', 'Pallet', 'PO #', 'Part #', 'Description', 'Cases', 'Units', 'Weight (lb)', 'Layers', 'Pallet Height (in)', 'Pallet Weight (lb)', 'Date']];
+    const summary = [['Pallet ID', 'Pallet', 'PO #s', 'Parts', 'Cases', 'Units', 'Weight (lb)', 'Height (in)', 'Length (in)', 'Width (in)', 'Layers', 'Full Pallet Of', 'Date']];
+    P.pallets.forEach((pal, i) => {
+      const id = palId(i), lines = new Map();
+      pal.layers.forEach(L => L.parts.forEach(p => {
+        const k = (L.po || '') + '|' + p.it.code; const e = lines.get(k) || { po: L.po || '', it: p.it, cs: 0, layers: [] };
+        e.cs += p.take; if (!e.layers.includes(L.num)) e.layers.push(L.num); lines.set(k, e); }));
+      let units = 0, unitsOk = true;
+      [...lines.values()].sort((a, b) => byPart(a.po, b.po) || byPart(a.it.code, b.it.code)).forEach(e => {
+        const u = e.it.cq > 0 ? e.cs * e.it.cq : ''; if (u === '') unitsOk = false; else units += u;
+        const ly = e.layers.length > 1 && e.layers[e.layers.length - 1] - e.layers[0] === e.layers.length - 1 ? e.layers[0] + '-' + e.layers[e.layers.length - 1] : e.layers.join(' ');
+        manifest.push([id, i + 1, e.po, e.it.code, e.it.desc || '', e.cs, u, r1(e.cs * e.it.wt), ly, r1(pal.h), r1(pal.wt), date]);
+      });
+      const pos = [...new Set(pal.layers.map(L => L.po).filter(Boolean))].sort(byPart);
+      summary.push([id, i + 1, pos.join(' '), new Set([...lines.values()].map(e => e.it.code)).size, pal.cases, unitsOk ? units : '', r1(pal.wt), r1(pal.h), s.L, s.W, pal.layers.length, pal.full || '', date]);
+    });
+    return { manifest, summary, n: P.pallets.length };
+  }
+  // a small Excel (.xlsx) writer: one workbook, one sheet per table (no library needed, works offline)
+  const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+  const crc32 = u => { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = CRC_T[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+  function zipStore(files){
+    const enc = new TextEncoder(), parts = [], cen = []; let off = 0;
+    files.forEach(([name, text]) => {
+      const nb = enc.encode(name), db = enc.encode(text), crc = crc32(db), h = new DataView(new ArrayBuffer(30));
+      h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(8, 0, true); h.setUint32(14, crc, true); h.setUint32(18, db.length, true); h.setUint32(22, db.length, true); h.setUint16(26, nb.length, true);
+      parts.push(new Uint8Array(h.buffer), nb, db);
+      const c = new DataView(new ArrayBuffer(46)); c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint32(16, crc, true); c.setUint32(20, db.length, true); c.setUint32(24, db.length, true); c.setUint16(28, nb.length, true); c.setUint32(42, off, true);
+      cen.push(new Uint8Array(c.buffer), nb); off += 30 + nb.length + db.length;
+    });
+    const cs = cen.reduce((a, b) => a + b.length, 0), e = new DataView(new ArrayBuffer(22));
+    e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, cs, true); e.setUint32(16, off, true);
+    const all = parts.concat(cen, [new Uint8Array(e.buffer)]), out = new Uint8Array(all.reduce((a, b) => a + b.length, 0)); let p = 0; all.forEach(b => { out.set(b, p); p += b.length; }); return out;
+  }
+  function xlsx(sheets){
+    const x = v => String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const col = n => { let s = ''; n++; while (n){ const m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); } return s; };
+    const sheetXml = rows => '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>' +
+      rows.map((r, i) => `<row r="${i + 1}">` + r.map((v, j) => { const ref = col(j) + (i + 1);
+        return typeof v === 'number' && isFinite(v) ? `<c r="${ref}"><v>${v}</v></c>` : v === '' || v == null ? '' : `<c r="${ref}" t="inlineStr"${i === 0 ? ' s="1"' : ''}><is><t>${x(v)}</t></is></c>`; }).join('') + '</row>').join('') + '</sheetData></worksheet>';
+    const files = [
+      ['[Content_Types].xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>' + sheets.map((_, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('') + '</Types>'],
+      ['_rels/.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+      ['xl/workbook.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>' + sheets.map((sh, i) => `<sheet name="${x(sh.name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('') + '</sheets></workbook>'],
+      ['xl/_rels/workbook.xml.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + sheets.map((_, i) => `<Relationship Id="rId${i + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i + 1}.xml"/>`).join('') + `<Relationship Id="rId${sheets.length + 1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`],
+      ['xl/styles.xml', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf/></cellStyleXfs><cellXfs count="2"><xf/><xf fontId="1" applyFont="1"/></cellXfs></styleSheet>'],
+    ].concat(sheets.map((sh, i) => [`xl/worksheets/sheet${i + 1}.xml`, sheetXml(sh.rows)]));
+    return zipStore(files);
+  }
+  function openExport(){
+    const r = exportRows(), m = $('#expMsg');
+    $('#expPrefix').value = palIds.prefix; $('#expStart').value = curStart(); $('#expAuto').checked = palIds.auto !== false;
+    m.className = 'msg'; m.textContent = r ? `${r.n} pallet${r.n === 1 ? '' : 's'} in this build: IDs ${palId(0)}${r.n > 1 ? ' to ' + palId(r.n - 1) : ''}.` : 'Build some pallets first, then export them.';
+    ['#expManifest', '#expSummary', '#expExcel'].forEach(b => { $(b).disabled = !r; });
+    $('#expDlg').showModal();
+  }
+  function readIdFields(){ palIds.prefix = $('#expPrefix').value.replace(/[,\r\n"]/g, '').slice(0, 20);
+    const v = Math.max(0, Math.floor(num($('#expStart').value)) || 0); if (v !== curStart()){ palIds.next = v; expPlan = null; expStart = null; }
+    palIds.auto = $('#expAuto').checked; savePalIds();
+    const r = exportRows(); if (r) $('#expMsg').textContent = `${r.n} pallet${r.n === 1 ? '' : 's'} in this build: IDs ${palId(0)}${r.n > 1 ? ' to ' + palId(r.n - 1) : ''}.`; }
+  ['#expPrefix', '#expStart', '#expAuto'].forEach(id => $(id).addEventListener('input', readIdFields));
+  async function doExport(kind){
+    readIdFields(); const r = exportRows(), m = $('#expMsg'); if (!r) return;
+    const stamp = today(), first = palId(0), last = palId(r.n - 1);
+    let ok;
+    if (kind === 'excel') ok = await offerFile(`pallets-${stamp}.xlsx`, xlsx([{ name: 'Manifest', rows: r.manifest }, { name: 'Summary', rows: r.summary }]), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', m);
+    else ok = await offerFile(`pallet-${kind}-${stamp}.csv`, toCsv(kind === 'manifest' ? r.manifest : r.summary), 'text/csv', m);
+    if (!ok) return;
+    m.className = 'msg ok'; m.textContent = `Saved ${kind === 'excel' ? 'the Excel file' : 'the ' + kind + ' CSV'} for ${r.n} pallet${r.n === 1 ? '' : 's'} (${first}${r.n > 1 ? ' to ' + last : ''}).`;
+    if (palIds.auto && expPlan !== lastPlan){ expPlan = lastPlan; expStart = palIds.next; palIds.next += r.n; savePalIds(); }
+    if (palIds.auto) m.textContent += ` This build keeps these IDs; the next build starts at ${palIds.prefix + palIds.next}.`;
+  }
+  $('#exportBtn').addEventListener('click', openExport);
+  $('#expManifest').addEventListener('click', () => doExport('manifest'));
+  $('#expSummary').addEventListener('click', () => doExport('summary'));
+  $('#expExcel').addEventListener('click', () => doExport('excel'));
+  $('#expClose').addEventListener('click', () => $('#expDlg').close());
+  $('#expDlg').addEventListener('click', e => { if (e.target === e.currentTarget) e.currentTarget.close(); });
+
+  // Column matching: the first time a file's columns can't be read (or you press Match columns), pick which column is which.
+  // The layout is remembered by the file's column names, so files from the same system load with no questions after that.
+  const LAYOUT_FIELDS = {
+    po: { title: 'Match the order file columns', need: ['code', 'qty'], fields: [['po', 'PO #', 'PO Number'], ['code', 'Part #', 'Part #'], ['qty', 'Qty', 'Qty'], ['uom', 'Unit (EA / CS)', 'UOM']] },
+    cat: { title: 'Match the box-size file columns', need: ['code', 'h', 'w', 'l', 'wt'], fields: [['code', 'Part #', 'Part #'], ['desc', 'Description', 'Description'], ['h', 'H (in)', 'H'], ['w', 'W (in)', 'W'], ['l', 'L (in)', 'L'], ['wt', 'LB per case', 'LB'], ['cq', 'Units / case', 'Units/Case']] },
+  };
+  const layouts = lsGet((PB_PFX+'layouts')) || {};
+  const forceMap = { po: false, cat: false };
+  const hdrIndex = rows => rows.findIndex(r => (r || []).filter(c => String(c ?? '').trim()).length >= 2);
+  const sigOf = hdr => hdr.map(c => String(c ?? '').toLowerCase().replace(/[^a-z0-9#]/g, '')).join('|');
+  function remap(kind, rows, map){
+    const hi = hdrIndex(rows), F = LAYOUT_FIELDS[kind].fields.filter(f => map[f[0]] != null && map[f[0]] !== '');
+    return [F.map(f => f[2])].concat(rows.slice(hi + 1).map(r => F.map(f => (r || [])[+map[f[0]]] ?? '')));
+  }
+  // use a remembered layout when this file has the same column names as one seen before
+  function applySaved(kind, sheets){
+    return sheets.map(sh => { const hi = hdrIndex(sh.rows); if (hi < 0) return sh; const m = layouts[kind + ':' + sigOf(sh.rows[hi])]; return m ? { ...sh, rows: remap(kind, sh.rows, m) } : sh; });
+  }
+  let mapResolve = null, mapCtx = null;
+  function askColumns(kind, sheets){
+    const sh = sheets.slice().sort((a, b) => b.rows.length - a.rows.length)[0]; if (!sh) return Promise.resolve(null);
+    const hi = hdrIndex(sh.rows); if (hi < 0) return Promise.resolve(null);
+    const hdr = sh.rows[hi].map(c => String(c ?? '').trim()), L = LAYOUT_FIELDS[kind];
+    const guess = kind === 'po' ? poHeader(hdr) : headerMap(hdr);
+    mapCtx = { kind, sh, hi, hdr };
+    $('#mapTitle').textContent = L.title;
+    $('#mapFields').innerHTML = L.fields.map(([k, label]) => `<div class="field"><label for="map-${k}">${label}${L.need.includes(k) ? '' : ' <small>(if any)</small>'}</label><select id="map-${k}" data-mk="${k}"><option value="">— none —</option>${hdr.map((h, i) => h ? `<option value="${i}"${guess[k] === i ? ' selected' : ''}>${esc(h)}</option>` : '').join('')}</select></div>`).join('');
+    $('#mapSave').checked = true; $('#mapMsg').textContent = ''; mapPreview();
+    $('#mapDlg').showModal();
+    return new Promise(res => { mapResolve = res; });
+  }
+  function mapChoice(){ const m = {}; document.querySelectorAll('#mapFields [data-mk]').forEach(s => { if (s.value !== '') m[s.dataset.mk] = +s.value; }); return m; }
+  function mapPreview(){
+    const { kind, sh } = mapCtx, rows = remap(kind, sh.rows, mapChoice()).slice(0, 5);
+    $('#mapPreview').innerHTML = rows.length > 1 ? `<thead><tr>${rows[0].map(h => `<th>${esc(h)}</th>`).join('')}</tr></thead><tbody>${rows.slice(1).map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>` : '<tbody><tr><td class="empty">Pick at least one column.</td></tr></tbody>';
+  }
+  $('#mapFields').addEventListener('change', mapPreview);
+  $('#mapOk').addEventListener('click', () => {
+    const { kind, sh, hdr } = mapCtx, m = mapChoice(), miss = LAYOUT_FIELDS[kind].need.filter(k => m[k] == null);
+    if (miss.length){ $('#mapMsg').className = 'msg err'; $('#mapMsg').textContent = 'Pick a column for: ' + miss.map(k => LAYOUT_FIELDS[kind].fields.find(f => f[0] === k)[1]).join(', ') + '.'; return; }
+    if ($('#mapSave').checked){ layouts[kind + ':' + sigOf(hdr)] = m; lsSet((PB_PFX+'layouts'), layouts); }
+    $('#mapDlg').close(); const r = mapResolve; mapResolve = null; r && r([{ name: sh.name, rows: remap(kind, sh.rows, m) }]);
+  });
+  $('#mapCancel').addEventListener('click', () => $('#mapDlg').close());
+  $('#mapDlg').addEventListener('close', () => { if (mapResolve){ const r = mapResolve; mapResolve = null; r(null); } });
+  $('#mapForget').addEventListener('click', e => { if (!arm(e.target, 'forget-layouts', 'Tap again to forget all')) return; Object.keys(layouts).forEach(k => delete layouts[k]); lsSet((PB_PFX+'layouts'), layouts); $('#mapMsg').className = 'msg ok'; $('#mapMsg').textContent = 'Forgot all saved column layouts.'; });
+  $('#poMapBtn').addEventListener('click', () => { forceMap.po = true; $('#poFile').click(); });
+  $('#catMapBtn').addEventListener('click', () => { forceMap.cat = true; $('#catFile').click(); });
 
   // ---------- part # not in the Box catalog: offer to add it ----------
   let askCode = '';
@@ -3021,14 +3210,14 @@ self.onmessage = async e => { const m = e.data;
 })();
 </script>
 
-<div id="appVersion" class="appver" aria-label="Program version">v1.0.0</div>
+<div id="appVersion" class="appver" aria-label="Program version">v1.1.0</div>
 <div id="updBar" class="updbar" hidden></div>
 <div id="updState" class="appver updstate" role="status" hidden></div>
 
 <script>
 // Updates: the installed program checks the shared copy online. The launcher swaps in a newer copy each time Pallet Builder opens;
 // if one comes out while the program is open, this says to close and reopen it.
-window.PB_BUILD = 2026100106; window.PB_VERSION = '1.0.0';
+window.PB_BUILD = 2026100107; window.PB_VERSION = '1.1.0';
 (function(){
   var P = window.PB_PROFILE || {}, url = P.updateUrl; if (!url || location.protocol !== 'file:') return;
   var st = document.getElementById('updState');
